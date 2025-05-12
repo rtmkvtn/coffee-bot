@@ -1,6 +1,6 @@
 import TelegramBot, { Message } from "node-telegram-bot-api";
 import express from 'express';
-import { BOT_TOKEN, WEBHOOK_URL } from './constants';
+import {BOT_TOKEN, WEBAPP_URL} from './constants';
 
 const bot = new TelegramBot(BOT_TOKEN, {polling: true})
 
@@ -30,7 +30,7 @@ bot.on('message', async (msg: Message) => {
         inline_keyboard: [
           [
             {
-              text: 'Button', web_app: {url: WEBHOOK_URL}
+              text: 'Button', web_app: {url: WEBAPP_URL}
             }
           ]
         ]
