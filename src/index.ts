@@ -2,7 +2,8 @@ import TelegramBot, { Message } from "node-telegram-bot-api";
 import express from 'express';
 import {BOT_TOKEN, WEBAPP_URL, WEBHOOK_URL} from './constants';
 
-const bot = new TelegramBot(BOT_TOKEN, {polling: true})
+const bot = new TelegramBot(BOT_TOKEN, { webHook: true });
+bot.setWebHook(WEBHOOK_URL);
 
 // Create Express app
 const app = express();
@@ -19,8 +20,6 @@ const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
-
-bot.setWebHook(WEBHOOK_URL)
 
 bot.on('message', async (msg: Message) => {
   const chatId = msg.chat.id
