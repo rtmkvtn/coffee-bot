@@ -19,6 +19,7 @@ app.post('/telegram-webhook', (req, res) => {
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
+  console.log(WEBAPP_URL, WEBHOOK_URL)
 });
 
 bot.on('message', async (msg: Message) => {
