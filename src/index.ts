@@ -1,3 +1,5 @@
+import dotenv from 'dotenv';
+dotenv.config();
 import TelegramBot, { Message } from "node-telegram-bot-api";
 import express from 'express';
 import {BOT_TOKEN, WEBAPP_URL, WEBHOOK_URL} from './constants';
