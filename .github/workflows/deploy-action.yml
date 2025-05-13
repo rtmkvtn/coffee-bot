@@ -23,5 +23,5 @@ jobs:
             cd /root/coffee-bot
             git pull origin master
             npm install
-            pm2 restart coffee-bot
+            pm2 restart bot
           EOF
