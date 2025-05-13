@@ -25,6 +25,7 @@ app.listen(PORT, () => {
 bot.on('message', async (msg: Message) => {
   const chatId = msg.chat.id
   const text = msg.text
+  console.log(`message #${text}`);
 
   if (text === '/start') {
     await bot.sendMessage(chatId, 'Кнопка ниже', {
