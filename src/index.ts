@@ -4,6 +4,10 @@ import TelegramBot, { Message } from "node-telegram-bot-api";
 import express from 'express';
 import {BOT_TOKEN, WEBAPP_URL, WEBHOOK_URL} from './constants';
 
+if (!BOT_TOKEN) {
+  throw new Error('BOT_TOKEN is not defined');
+}
+
 const bot = new TelegramBot(BOT_TOKEN, { webHook: true });
 bot.setWebHook(WEBHOOK_URL);
 
