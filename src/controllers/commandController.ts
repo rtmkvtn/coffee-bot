@@ -1,3 +1,4 @@
+import { localizationService } from '@/services/localizationService'
 import { telegramService } from '@/services/telegramService'
 import { ICommand, IMessage } from '@/types'
 
@@ -20,7 +21,7 @@ class CommandController {
         console.error(`Error handling command ${command}:`, error)
         await telegramService.sendMessage(
           message.chat.id,
-          'Извините, произошла ошибка. Пожалуйста, попробуйте позже.'
+          localizationService.getText('error', message.from?.language_code)
         )
       }
     }

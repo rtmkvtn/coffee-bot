@@ -5,36 +5,28 @@ import { commandController } from './controllers/commandController'
 import { eventController } from './controllers/eventController'
 import router from './routes'
 import { botService } from './services/botService'
+import { localizationService } from './services/localizationService'
 import { telegramService } from './services/telegramService'
 
 // Register commands
 commandController.registerCommand({
   command: '/start',
-  description: 'Начать работу с ботом',
+  description: localizationService.getCommandDescription('start'),
   handler: async (message) => {
     await telegramService.sendMessage(
       message.chat.id,
-      'Добро пожаловать в Coffee Bot! 🎉\n\nИспользуйте /menu чтобы увидеть наше меню.'
+      localizationService.getText('welcome', message.from?.language_code)
     )
   },
 })
 
 commandController.registerCommand({
   command: '/menu',
-  description: 'Показать меню',
+  description: localizationService.getCommandDescription('menu'),
   handler: async (message) => {
     await telegramService.sendMessage(
       message.chat.id,
-      'Наше меню:\n\n' +
-        '☕️ Кофе:\n' +
-        '- Эспрессо\n' +
-        '- Американо\n' +
-        '- Капучино\n' +
-        '- Латте\n\n' +
-        '🍵 Чай:\n' +
-        '- Черный чай\n' +
-        '- Зеленый чай\n' +
-        '- Травяной чай'
+      localizationService.getText('menu', message.from?.language_code)
     )
   },
 })
