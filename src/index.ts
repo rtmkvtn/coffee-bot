@@ -1,56 +1,97 @@
-import dotenv from 'dotenv'
 import express from 'express'
-import TelegramBot, { Message } from 'node-telegram-bot-api'
 
-import { BOT_TOKEN, WEBAPP_URL, WEBHOOK_URL } from './constants'
+import { config } from './config'
+import { commandController } from './controllers/commandController'
+import { eventController } from './controllers/eventController'
+import router from './routes'
+import { botService } from './services/botService'
+import { telegramService } from './services/telegramService'
 
-dotenv.config()
-console.log('BOT_TOKEN:', process.env.BOT_TOKEN)
+// Register commands
+commandController.registerCommand({
+  command: '/start',
+  description: 'Начать работу с ботом',
+  handler: async (message) => {
+    await telegramService.sendMessage(
+      message.chat.id,
+      'Добро пожаловать в Coffee Bot! 🎉\n\nИспользуйте /menu чтобы увидеть наше меню.'
+    )
+  },
+})
 
-if (!BOT_TOKEN) {
-  throw new Error('BOT_TOKEN is not defined')
-}
-
-const bot = new TelegramBot(
-  BOT_TOKEN,
-  process.env.NODE_ENV === 'development' ? { polling: true } : { webHook: true }
-)
-bot.setWebHook(WEBHOOK_URL)
+commandController.registerCommand({
+  command: '/menu',
+  description: 'Показать меню',
+  handler: async (message) => {
+    await telegramService.sendMessage(
+      message.chat.id,
+      'Наше меню:\n\n' +
+        '☕️ Кофе:\n' +
+        '- Эспрессо\n' +
+        '- Американо\n' +
+        '- Капучино\n' +
+        '- Латте\n\n' +
+        '🍵 Чай:\n' +
+        '- Черный чай\n' +
+        '- Зеленый чай\n' +
+        '- Травяной чай'
+    )
+  },
+})
 
 // Create Express app
 const app = express()
 app.use(express.json())
 
-// Webhook endpoint
-app.post('/telegram-webhook', (req, res) => {
-  bot.processUpdate(req.body)
-  res.sendStatus(200)
-})
+// Use routes
+app.use('/', router)
 
-// Start Express server
-const PORT = process.env.PORT || 3001
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`)
-})
+let server: any
 
-bot.on('message', async (msg: Message) => {
-  const chatId = msg.chat.id
-  const text = msg.text
+// Initialize bot and start server
+async function startServer() {
+  try {
+    // Initialize bot
+    await botService.initialize()
 
-  console.log(`message #${text}`)
+    // Initialize event handlers
+    eventController.initialize()
 
-  if (text === '/start') {
-    await bot.sendMessage(chatId, 'Кнопка ниже', {
-      reply_markup: {
-        inline_keyboard: [
-          [
-            {
-              text: 'Button',
-              web_app: { url: WEBAPP_URL },
-            },
-          ],
-        ],
-      },
+    // Start server
+    server = app.listen(config.server.port, () => {
+      console.log(`Server is running on port ${config.server.port}`)
     })
+  } catch (error) {
+    console.error('Failed to start server:', error)
+    process.exit(1)
   }
-})
+}
+
+// Graceful shutdown
+async function shutdown() {
+  console.log('Shutting down gracefully...')
+
+  try {
+    // Delete webhook
+    await botService.deleteWebhook()
+
+    // Close server
+    if (server) {
+      await new Promise((resolve) => {
+        server.close(resolve)
+      })
+    }
+
+    console.log('Server shut down successfully')
+    process.exit(0)
+  } catch (error) {
+    console.error('Error during shutdown:', error)
+    process.exit(1)
+  }
+}
+
+// Handle shutdown signals
+process.on('SIGTERM', shutdown)
+process.on('SIGINT', shutdown)
+
+startServer()
