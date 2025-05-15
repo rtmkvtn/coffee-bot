@@ -1,9 +1,8 @@
 import fetch from 'node-fetch'
 
-import { BOT_TOKEN, WEBHOOK_URL } from './constants'
+import { config } from './config'
 
-const token = BOT_TOKEN
-const webhookUrl = WEBHOOK_URL
+const { token, webhookUrl } = config.bot
 
 if (!token || !webhookUrl) {
   console.error(
@@ -17,7 +16,7 @@ async function setWebhook() {
   const res = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: `url=${encodeURIComponent(webhookUrl as string)}`,
+    body: `url=${encodeURIComponent(webhookUrl)}`,
   })
   const data = await res.json()
   console.log(data)

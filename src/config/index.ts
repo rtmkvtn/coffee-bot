@@ -21,9 +21,15 @@ if (missingEnvVars.length > 0) {
 export const config = {
   bot: {
     token: process.env.BOT_TOKEN!,
-    webhookUrl: process.env.WEBHOOK_URL,
+    webhookUrl:
+      process.env.WEBHOOK_URL ||
+      'https://democoffeeandseaguls.ru/telegram-webhook',
   },
   server: {
-    port: parseInt(process.env.PORT || '3001'),
+    port: parseInt(process.env.PORT || '3001', 10),
   },
+  webapp: {
+    url: process.env.WEBAPP_URL || 'https://democoffeeandseaguls.ru/web-app',
+  },
+  domain: process.env.DOMAIN || 'https://democoffeeandseaguls.ru',
 } as const
