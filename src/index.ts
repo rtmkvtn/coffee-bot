@@ -3,7 +3,8 @@ import express from 'express'
 import fetch from 'node-fetch'
 import TelegramBot, { Message } from 'node-telegram-bot-api'
 
-import { BACKEND_URL, BOT_TOKEN, WEBAPP_URL, WEBHOOK_URL } from './constants'
+import { BACKEND_URL, BOT_NOTIFY_SECRET, BOT_TOKEN, WEBAPP_URL, WEBHOOK_URL } from './constants'
+import { getNotificationMessage } from './notifications'
 import { getTerms } from './terms'
 
 dotenv.config()
@@ -27,6 +28,39 @@ app.use(express.json())
 app.post('/telegram-webhook', (req, res) => {
   bot.processUpdate(req.body)
   res.sendStatus(200)
+})
+
+// Order status notification endpoint
+app.post('/notify', async (req, res) => {
+  const authHeader = req.headers.authorization
+  if (!BOT_NOTIFY_SECRET || authHeader !== `Bearer ${BOT_NOTIFY_SECRET}`) {
+    res.sendStatus(401)
+    return
+  }
+
+  const { telegramId, orderId, status, locale } = req.body as {
+    telegramId: string
+    orderId: string
+    status: string
+    locale?: string
+  }
+
+  const message = getNotificationMessage(orderId, status, locale)
+  if (!message) {
+    res.status(400).json({ error: `Unknown status: ${status}` })
+    return
+  }
+
+  try {
+    await bot.sendMessage(telegramId, message)
+    res.sendStatus(200)
+  } catch (err) {
+    console.warn(
+      `Failed to send notification to telegramId=${telegramId}:`,
+      err
+    )
+    res.sendStatus(200)
+  }
 })
 
 // Start Express server
