@@ -7,6 +7,7 @@ export const TERMS: Record<
     success: string
     welcomeBack: string
     declined: string
+    openMenu: string
   }
 > = {
   ru: {
@@ -20,6 +21,7 @@ export const TERMS: Record<
     success: 'Спасибо! Условия приняты. Добро пожаловать!',
     welcomeBack: 'С возвращением!',
     declined: 'Без проблем! Возвращайтесь в любое время с /start',
+    openMenu: 'Открыть меню',
   },
   en: {
     text:
@@ -32,6 +34,7 @@ export const TERMS: Record<
     success: 'Thank you! Terms accepted. Welcome!',
     welcomeBack: 'Welcome back!',
     declined: 'No problem! Come back anytime with /start',
+    openMenu: 'Open menu',
   },
   zh: {
     text:
@@ -44,6 +47,7 @@ export const TERMS: Record<
     success: '谢谢！条款已接受。欢迎！',
     welcomeBack: '欢迎回来！',
     declined: '没问题！随时使用 /start 回来',
+    openMenu: '打开菜单',
   },
 }
 

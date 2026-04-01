@@ -88,14 +88,16 @@ bot.on('message', async (msg: Message) => {
     if (status?.agreedToTerms) {
       await bot.sendMessage(chatId, terms.welcomeBack, {
         reply_markup: {
-          inline_keyboard: [
+          keyboard: [
             [
               {
-                text: 'Button',
+                text: terms.openMenu,
                 web_app: { url: WEBAPP_URL },
               },
             ],
           ],
+          resize_keyboard: true,
+          one_time_keyboard: false,
         },
       })
       return
@@ -134,14 +136,16 @@ bot.on('callback_query', async (query) => {
     if (ok) {
       await bot.sendMessage(chatId, terms.success, {
         reply_markup: {
-          inline_keyboard: [
+          keyboard: [
             [
               {
-                text: 'Button',
+                text: terms.openMenu,
                 web_app: { url: WEBAPP_URL },
               },
             ],
           ],
+          resize_keyboard: true,
+          one_time_keyboard: false,
         },
       })
     } else {
